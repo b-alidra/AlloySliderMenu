@@ -1,19 +1,30 @@
 <Alloy>
 	<View id="containerview">
 		<View id="leftMenu">
-			<TableView id="leftTableView" />
+			<TableView id="leftTableView">
+				<FooterView>
+            		<View/>
+        		</FooterView>
+			</TableView>
 		</View>
 		<View id="rightMenu">
-			<TableView id="rightTableView" />
+			<TableView id="rightTableView">
+				<FooterView>
+            		<View/>
+        		</FooterView>
+			</TableView>
 		</View>
 		<View id="movableview">
 			<View id="shadowview">
 				<View id="navview">
-					<Button id="leftButton" />
-					<Button id="rightButton" />
+					<Label id="leftButton" class="fa-icon" icon="fa-navicon"/>
+					<Label id="screenTitle" text="Screen title" />
+					<Label id="rightButton" class="fa-icon" icon="fa-navicon"/>
+					<Label id="searchButton" class="fa-icon" icon="fa-search"/>
 				</View>
 				<View id="contentview" />
 			</View>
 		</View>
+		<Widget id="fa" src="com.mattmcfarland.fontawesome"/>
 	</View>
 </Alloy>

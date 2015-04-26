@@ -1,0 +1,26 @@
+".vgroup": {
+	layout: "vertical",
+	height: Ti.UI.SIZE
+},
+"#row": {
+	backgroundColor: Alloy.Globals.theme.menu.rowBackgroundColor,
+	selectedBackgroundColor: Alloy.Globals.theme.menu.separatorColor,//Alloy.Globals.theme.menu.selectedRowBackgroundColor,
+	height: "44dp",
+	borderWidth: 1,
+	borderColor: Alloy.Globals.theme.menu.separatorColor,
+},
+"#icon": {
+	left: "15dp",
+	color:  Alloy.Globals.theme.menu.iconColor,
+	font: {
+		fontSize: "16"		
+	}
+},
+"#title": {
+	left: "38dp",
+	color: Alloy.Globals.theme.menu.textColor,
+	font: {
+		fontSize: "14",
+		fontFamily: "OpenSans-SemiBold"
+	}
+}

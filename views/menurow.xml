@@ -1,0 +1,9 @@
+<Alloy>
+	<TableViewRow id="row" class="row">
+		<Label class="fa-icon" id="icon"/>
+		<View class="vgroup">
+			<Label id="title"/>
+		</View>
+		<Widget id="fa" src="com.mattmcfarland.fontawesome" debugMode="true"/>
+	</TableViewRow>
+</Alloy>

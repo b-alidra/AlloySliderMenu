@@ -1,5 +1,5 @@
 var animateRight = Ti.UI.createAnimation({
-	left : 250,
+	left : 270,
 	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
 	duration : 150
 });
@@ -11,7 +11,7 @@ var animateReset = Ti.UI.createAnimation({
 });
 
 var animateLeft = Ti.UI.createAnimation({
-	left : -250,
+	left : -270,
 	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
 	duration : 150
 });
@@ -23,6 +23,9 @@ var buttonPressed = false;
 var hasSlided = false;
 var direction = "reset";
 
+var menuOnLeft	= false;
+var menuOnRight	= false;
+
 $.movableview.addEventListener('touchstart', function(e) {
 	touchStartX = e.x;
 });
@@ -32,18 +35,18 @@ $.movableview.addEventListener('touchend', function(e) {
 		buttonPressed = false;
 		return;
 	}
-	if ($.movableview.left >= 150 && touchRightStarted) {
+	if ($.movableview.left >= 150 && touchRightStarted && menuOnLeft) {
 		direction = "right";
 		$.leftButton.touchEnabled = false;
 		$.movableview.animate(animateRight);
 		hasSlided = true;
 	}
-	else if ($.movableview.left <= -150 && touchLeftStarted) {
+	else if ($.movableview.left <= -150 && touchLeftStarted && menuOnRight) {
 		direction = "left";
 		$.rightButton.touchEnabled = false;
 		$.movableview.animate(animateLeft);
 		hasSlided = true;
-	} else {
+	} else if (menuOnLeft || menuOnRight){
 		direction = "reset";
 		$.leftButton.touchEnabled = true;
 		$.rightButton.touchEnabled = true;
@@ -64,8 +67,8 @@ $.movableview.addEventListener('touchmove', function(e) {
 		y : e.y
 	}, $.containerview);
 	var newLeft = coords.x - touchStartX;
-	if ((touchRightStarted && newLeft <= 250 && newLeft >= 0) || 
-		(touchLeftStarted && newLeft <= 0 && newLeft >= -250)) {
+	if ((touchRightStarted && newLeft <= 270 && newLeft >= 0) || 
+		(touchLeftStarted && newLeft <= 0 && newLeft >= -270)) {
 		$.movableview.left = newLeft;
 	}
 	else {
@@ -74,21 +77,21 @@ $.movableview.addEventListener('touchmove', function(e) {
 		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
 			$.movableview.left = 0;
 		}
-		else if (touchRightStarted && newLeft > 250) {
-			$.movableview.left = 250;
+		else if (touchRightStarted && newLeft > 270) {
+			$.movableview.left = 270;
 		}
-		else if (touchLeftStarted && newLeft < -250) {
-			$.movableview.left = -250;
+		else if (touchLeftStarted && newLeft < -270) {
+			$.movableview.left = -270;
 		}
 	}
-	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted) {
+	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && menuOnLeft) {
 		touchRightStarted = true;
 		Ti.App.fireEvent("sliderToggled", {
 			hasSlided : false,
 			direction : "right"
 		});
 	}
-	else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted) {
+	else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted && menuOnRight) {
 		touchLeftStarted = true;
 		Ti.App.fireEvent("sliderToggled", {
 			hasSlided : false,
@@ -111,6 +114,30 @@ $.rightButton.addEventListener('touchend', function(e) {
 	}
 });
 
+$.searchButton.addEventListener('click', function(e) {
+	Ti.App.fireEvent('searchButtonClick', e);
+})
+
+// Swap views on menu item click
+$.leftTableView.addEventListener('click', function selectRow(e) {
+	rowSelect(e.row);
+	exports.toggleLeftSlider();
+});
+$.rightTableView.addEventListener('click', function selectRow(e) {
+	rowSelect(e.row);
+	exports.toggleRightSlider();
+});
+
+Ti.App.addEventListener("sliderToggled", function(e) {
+	if (e.direction == "right" && menuOnLeft) {
+		$.leftMenu.zIndex = 2;
+		$.rightMenu.zIndex = 1;
+	} else if (e.direction == "left" && menuOnRight) {
+		$.leftMenu.zIndex = 1;
+		$.rightMenu.zIndex = 2;
+	}
+});
+
 exports.toggleLeftSlider = function() {
 	if (!hasSlided) {
 		direction = "right";
@@ -127,7 +154,7 @@ exports.toggleLeftSlider = function() {
 		hasSlided : hasSlided,
 		direction : direction
 	});
-}
+};
 
 exports.toggleRightSlider = function() {
 	if (!hasSlided) {
@@ -145,7 +172,7 @@ exports.toggleRightSlider = function() {
 		hasSlided : hasSlided,
 		direction : direction
     });
-}
+};
 
 exports.handleRotation = function() {
 /*
@@ -155,5 +182,75 @@ exports.handleRotation = function() {
 	});
 */
 	$.movableview.width = $.navview.width = $.contentview.width = Ti.Platform.displayCaps.platformWidth;
-	$.movableview.height = $.navview.height = $.contentview.height = Ti.Platform.displayCaps.platformHeight;
+	$.movableview.height = /*$.navview.height = */$.contentview.height = Ti.Platform.displayCaps.platformHeight;
+};
+
+Ti.Gesture.addEventListener('orientationchange', function() {
+	exports.handleRotation();
+});
+
+var currentTitle = null;
+var currentView = null;
+
+var rowSelect = function(row) {
+	if (null == currentView || currentTitle != row.customTitle.text) {
+		if (null != currentView) {
+			$.contentview.remove(currentView);
+		} 
+		$.screenTitle.text	= row.customTitle.text;
+		if (row.customView != '') {
+			currentView			= Alloy.createController(row.customView).getView();	
+		}
+		else {
+			var widget	= row.customWidget.toLowerCase(); 
+			currentView	= Alloy.createWidget(widget, null, row.customParams).getView();
+		}
+		$.contentview.add(currentView);
+		currentTitle = row.customTitle.text;
+	}
+};
+
+exports.init = function(rows) {
+ 	currentView		= null;
+ 	currentTitle	= null;	
+ 	
+ 	$.contentview.removeAllChildren();
+ 	$.leftTableView.removeAllChildren();
+ 	$.rightTableView.removeAllChildren();
+ 	
+	var params		= [];
+	var links		= Alloy.Globals.config.navigation.links;
+	
+	for(var i = 0, l = links.length; i < l; i++) {
+		var link = links[i];
+		row = exports.addMenuRow(link.title, link.icon, null, link.target.class, link.target.params, "left");
+		
+		if (i == 0) {
+			rowSelect(row);
+		}
+	}
+};
+
+exports.addView = function(view) {
+	$.contentview.add(view);
+	if ($.contentview.getChildren().length == 1) {
+		currentView = view;
+	}
+};
+
+exports.addMenuRow = function(title, icon, view, widget, params, pos) {
+	pos = pos || 'left';
+	var args = {
+		title : title,
+		customView : view,
+		customWidget : widget,
+		customParams : params,
+		icon : icon
+	};
+	var row = Widget.createController('menurow', args).getView();
+	pos == 'left' ? $.leftTableView.appendRow(row) : $.rightTableView.appendRow(row);
+	pos == 'left' ? menuOnLeft = true : menuOnRight = true;
+	pos == 'left' ? $.leftButton.visible = true : $.rightButton.visible = true;
+	 
+	return row;
 };
