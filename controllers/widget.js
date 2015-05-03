@@ -185,9 +185,9 @@ exports.handleRotation = function() {
 	$.movableview.height = /*$.navview.height = */$.contentview.height = Ti.Platform.displayCaps.platformHeight;
 };
 
-Ti.Gesture.addEventListener('orientationchange', function() {
+/*Ti.Gesture.addEventListener('orientationchange', function() {
 	exports.handleRotation();
-});
+});*/
 
 var currentTitle = null;
 var currentView = null;
@@ -198,12 +198,12 @@ var rowSelect = function(row) {
 			$.contentview.remove(currentView);
 		} 
 		$.screenTitle.text	= row.customTitle.text;
-		if (row.customView != '') {
-			currentView			= Alloy.createController(row.customView).getView();	
+		if (row.customWidget == '') {
+			currentView	= Alloy.createController(row.customView).getView();	
 		}
 		else {
 			var widget	= row.customWidget.toLowerCase(); 
-			currentView	= Alloy.createWidget(widget, null, row.customParams).getView();
+			currentView	= Alloy.createWidget(widget, row.customView, row.customParams).getView();
 		}
 		$.contentview.add(currentView);
 		currentTitle = row.customTitle.text;
@@ -223,7 +223,7 @@ exports.init = function(rows) {
 	
 	for(var i = 0, l = links.length; i < l; i++) {
 		var link = links[i];
-		row = exports.addMenuRow(link.title, link.icon, null, link.target.class, link.target.params, "left");
+		row = exports.addMenuRow(link.title, link.icon, link.target.widget, link.target.view, link.target.params, "left");
 		
 		if (i == 0) {
 			rowSelect(row);
@@ -238,12 +238,12 @@ exports.addView = function(view) {
 	}
 };
 
-exports.addMenuRow = function(title, icon, view, widget, params, pos) {
+exports.addMenuRow = function(title, icon, widget, view, params, pos) {
 	pos = pos || 'left';
 	var args = {
 		title : title,
-		customView : view,
 		customWidget : widget,
+		customView : view,
 		customParams : params,
 		icon : icon
 	};

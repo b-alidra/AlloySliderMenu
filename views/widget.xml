@@ -1,6 +1,7 @@
 <Alloy>
 	<View id="containerview">
 		<View id="leftMenu">
+			<ImageView image="logo.png"></ImageView>
 			<TableView id="leftTableView">
 				<FooterView>
             		<View/>
