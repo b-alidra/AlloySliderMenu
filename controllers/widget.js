@@ -214,9 +214,9 @@ exports.init = function(rows) {
  	currentView		= null;
  	currentTitle	= null;	
  	
- 	$.contentview.removeAllChildren();
- 	$.leftTableView.removeAllChildren();
- 	$.rightTableView.removeAllChildren();
+ 	//$.contentview.removeAllChildren();
+ 	//$.leftTableView.removeAllChildren();
+ 	//$.rightTableView.removeAllChildren();
  	
 	var params		= [];
 	var links		= Alloy.Globals.config.navigation.links;
