@@ -4,7 +4,8 @@
 },
 "#row": {
 	backgroundColor: Alloy.Globals.theme.menu.rowBackgroundColor,
-	selectedBackgroundColor: Alloy.Globals.theme.menu.separatorColor,//Alloy.Globals.theme.menu.selectedRowBackgroundColor,
+	selectedBackgroundColor: Alloy.Globals.theme.menu.separatorColor,
+	backgroundFocusedColor: Alloy.Globals.theme.menu.selectedRowBackgroundColor,
 	height: "44dp",
 	borderWidth: 1,
 	borderColor: Alloy.Globals.theme.menu.separatorColor,
@@ -12,6 +13,7 @@
 "#icon": {
 	left: "15dp",
 	color:  Alloy.Globals.theme.menu.iconColor,
+	backgroundFocusedColor: Alloy.Globals.theme.menu.selectedIconColor,
 	font: {
 		fontSize: "16"		
 	}
@@ -22,5 +24,6 @@
 	font: {
 		fontSize: "14",
 		fontFamily: "OpenSans-SemiBold"
-	}
+	},
+	backgroundFocusedColor: Alloy.Globals.theme.menu.selectedTextColor,
 }

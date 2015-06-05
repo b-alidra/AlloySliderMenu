@@ -25,80 +25,81 @@ var direction = "reset";
 
 var menuOnLeft	= false;
 var menuOnRight	= false;
-
-$.movableview.addEventListener('touchstart', function(e) {
-	touchStartX = e.x;
-});
-
-$.movableview.addEventListener('touchend', function(e) {
-	if (buttonPressed) {
-		buttonPressed = false;
-		return;
-	}
-	if ($.movableview.left >= 150 && touchRightStarted && menuOnLeft) {
-		direction = "right";
-		$.leftButton.touchEnabled = false;
-		$.movableview.animate(animateRight);
-		hasSlided = true;
-	}
-	else if ($.movableview.left <= -150 && touchLeftStarted && menuOnRight) {
-		direction = "left";
-		$.rightButton.touchEnabled = false;
-		$.movableview.animate(animateLeft);
-		hasSlided = true;
-	} else if (menuOnLeft || menuOnRight){
-		direction = "reset";
-		$.leftButton.touchEnabled = true;
-		$.rightButton.touchEnabled = true;
-		$.movableview.animate(animateReset);
-		hasSlided = false;
-	}
-	Ti.App.fireEvent("sliderToggled", {
-		hasSlided : hasSlided,
-		direction : direction
+if (OS_IOS) {
+	$.movableview.addEventListener('touchstart', function(e) {
+		touchStartX = e.x;
 	});
-	touchRightStarted = false;
-	touchLeftStarted = false;
-});
-
-$.movableview.addEventListener('touchmove', function(e) {
-	var coords = $.movableview.convertPointToView({
-		x : e.x,
-		y : e.y
-	}, $.containerview);
-	var newLeft = coords.x - touchStartX;
-	if ((touchRightStarted && newLeft <= 270 && newLeft >= 0) || 
-		(touchLeftStarted && newLeft <= 0 && newLeft >= -270)) {
-		$.movableview.left = newLeft;
-	}
-	else {
-		// Sometimes newLeft goes beyond its bounds so the view gets stuck.
-		// This is a hack to fix that.
-		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
-			$.movableview.left = 0;
+	
+	$.movableview.addEventListener('touchend', function(e) {
+		if (buttonPressed) {
+			buttonPressed = false;
+			return;
 		}
-		else if (touchRightStarted && newLeft > 270) {
-			$.movableview.left = 270;
+		if ($.movableview.left >= 150 && touchRightStarted && menuOnLeft) {
+			direction = "right";
+			$.leftButton.touchEnabled = false;
+			$.movableview.animate(animateRight);
+			hasSlided = true;
 		}
-		else if (touchLeftStarted && newLeft < -270) {
-			$.movableview.left = -270;
+		else if ($.movableview.left <= -150 && touchLeftStarted && menuOnRight) {
+			direction = "left";
+			$.rightButton.touchEnabled = false;
+			$.movableview.animate(animateLeft);
+			hasSlided = true;
+		} else if (menuOnLeft || menuOnRight){
+			direction = "reset";
+			$.leftButton.touchEnabled = true;
+			$.rightButton.touchEnabled = true;
+			$.movableview.animate(animateReset);
+			hasSlided = false;
 		}
-	}
-	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && menuOnLeft) {
-		touchRightStarted = true;
 		Ti.App.fireEvent("sliderToggled", {
-			hasSlided : false,
-			direction : "right"
+			hasSlided : hasSlided,
+			direction : direction
 		});
-	}
-	else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted && menuOnRight) {
-		touchLeftStarted = true;
-		Ti.App.fireEvent("sliderToggled", {
-			hasSlided : false,
-			direction : "left"
-		});
-	}
-});
+		touchRightStarted = false;
+		touchLeftStarted = false;
+	});
+	
+	$.movableview.addEventListener('touchmove', function(e) {
+		var coords = $.movableview.convertPointToView({
+			x : e.x,
+			y : e.y
+		}, $.containerview);
+		var newLeft = coords.x - touchStartX;
+		if ((touchRightStarted && newLeft <= 270 && newLeft >= 0) || 
+			(touchLeftStarted && newLeft <= 0 && newLeft >= -270)) {
+			$.movableview.left = newLeft;
+		}
+		else {
+			// Sometimes newLeft goes beyond its bounds so the view gets stuck.
+			// This is a hack to fix that.
+			if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
+				$.movableview.left = 0;
+			}
+			else if (touchRightStarted && newLeft > 270) {
+				$.movableview.left = 270;
+			}
+			else if (touchLeftStarted && newLeft < -270) {
+				$.movableview.left = -270;
+			}
+		}
+		if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && menuOnLeft) {
+			touchRightStarted = true;
+			Ti.App.fireEvent("sliderToggled", {
+				hasSlided : false,
+				direction : "right"
+			});
+		}
+		else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted && menuOnRight) {
+			touchLeftStarted = true;
+			Ti.App.fireEvent("sliderToggled", {
+				hasSlided : false,
+				direction : "left"
+			});
+		}
+	});
+}
 
 $.leftButton.addEventListener('touchend', function(e) {
 	if (!touchRightStarted && !touchLeftStarted) {
@@ -185,9 +186,9 @@ exports.handleRotation = function() {
 	$.movableview.height = /*$.navview.height = */$.contentview.height = Ti.Platform.displayCaps.platformHeight;
 };
 
-/*Ti.Gesture.addEventListener('orientationchange', function() {
+Ti.Gesture.addEventListener('orientationchange', function() {
 	exports.handleRotation();
-});*/
+});
 
 var currentTitle = null;
 var currentView = null;

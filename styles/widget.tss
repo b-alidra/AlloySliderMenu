@@ -94,7 +94,8 @@
 	font: {
 		fontSize: "26dp"
 	},
-	color: Alloy.Globals.theme.navigation.menuButtonColor
+	color: Alloy.Globals.theme.navigation.menuButtonColor,
+	backgroundFocusedColor: Alloy.Globals.theme.navigation.menuButtonFocusedBackgroundColor
 },
 "#rightButton": {
 	right : "5",
@@ -105,7 +106,8 @@
 	font: {
 		fontSize: "26dp"
 	},
-	color: Alloy.Globals.theme.navigation.menuButtonColor
+	color: Alloy.Globals.theme.navigation.menuButtonColor,
+	backgroundFocusedColor: Alloy.Globals.theme.navigation.menuButtonFocusedBackgroundColor
 },
 "#searchButton": {
 	right : "5",
