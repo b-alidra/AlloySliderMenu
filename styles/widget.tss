@@ -2,20 +2,18 @@
 	
 },
 "#leftMenu": {
-	top: "0dp",
+	top: Alloy.Globals.WIN_TOP_OFFSET,
 	left: "0dp",
 	width: "270dp",
 	zIndex: "2",
-	top: "20dp",
     bottom: 0,
 	backgroundColor : Alloy.Globals.theme.menu.backgroundColor
 },
 "#rightMenu": {
-	top: "0dp",
+	top: Alloy.Globals.WIN_TOP_OFFSET,
 	right: "0dp",
 	width: "270dp",
 	zIndex: "1",
-	top: "20dp",
     bottom: 0,
 	backgroundColor : Alloy.Globals.theme.menu.backgroundColor
 },
@@ -58,7 +56,7 @@
 	left: "0",
 	zIndex: "3",
 	width : "100%",
-    top: "20dp",
+    top: Alloy.Globals.WIN_TOP_OFFSET,
     bottom: 0,
     viewShadowColor:"black",
     viewShadowOffset:{x:"0",y:"5"},
