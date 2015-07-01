@@ -186,16 +186,14 @@ exports.handleRotation = function() {
 	$.movableview.height = /*$.navview.height = */$.contentview.height = Ti.Platform.displayCaps.platformHeight;
 };
 
-Ti.Gesture.addEventListener('orientationchange', function() {
-	exports.handleRotation();
-});
-
 var currentTitle = null;
 var currentView = null;
 
 var rowSelect = function(row) {
 	if (null == currentView || currentTitle != row.customTitle.text) {
 		if (null != currentView) {
+			// We fire a hide event so as the view can make specific actions when hiding
+			currentView.fireEvent('hide');
 			$.contentview.remove(currentView);
 		} 
 		$.screenTitle.text	= row.customTitle.text;
